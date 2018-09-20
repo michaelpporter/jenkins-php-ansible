@@ -1,0 +1,32 @@
+<?php
+
+$txt = json_decode(file_get_contents('php://input'));
+
+$filename =  strtolower($txt->repository->name . '-' . $txt->ref);
+
+$node = exec('consul kv get sites/' . $filename . '/server');
+$runon = 'web';
+if ($node != '') {
+  $runon = $node;
+}
+
+$url = 'https://{{ setup_jenkins_url }}/buildByToken/buildWithParameters?job={{ setup_jenkins_clean_job }}&token={{ setup_jenkins_clean_job_key }}&CLEAN=' . $filename . '.txt&RUN_ON=' . $runon;
+
+//open connection
+$ch = curl_init();
+
+//set the url, number of POST vars, POST data
+curl_setopt($ch, CURLOPT_URL, $url);
+
+//execute post
+$result = curl_exec($ch);
+
+//close connection
+curl_close($ch);
+
+$data = array(
+  'path' => $cleanup,
+  'success' => $output,
+  );
+header('Content-Type: application/json');
+echo json_encode($data);

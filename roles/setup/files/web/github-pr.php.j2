@@ -1,0 +1,59 @@
+<?php
+
+$pr_log = fopen("pr_log.txt", "w") or die("Unable to open file!");
+
+$json = file_get_contents('php://input');
+$pr_data = json_decode($json, true);
+
+
+$filename =  $pr_data["pull_request"]["head"]["repo"]["name"] . '-' . $pr_data["pull_request"]["head"]["ref"];
+
+$node = exec('consul kv get sites/' . $filename . '/server');
+$runon = 'web';
+if ($node != '') {
+  $runon = $node;
+}
+
+
+$pr['merged_at'] = $pr_data["pull_request"]["merged_at"];
+$pr['name'] = $pr_data["pull_request"]["head"]["repo"]["name"];
+$pr['source'] = $pr_data["pull_request"]["head"]["ref"];
+$pr['target'] = $pr_data["pull_request"]["base"]["ref"];
+$pr['action'] = $pr_data["action"];
+$pr['filename'] = $filename;
+
+fwrite($pr_log, print_r($pr, true));
+fwrite($pr_log, "\n");
+fwrite($pr_log, "**********");
+fwrite($pr_log, "\n");
+fwrite($pr_log, print_r($pr_data, true));
+fwrite($pr_log, "\n");
+fwrite($pr_log, "**********");
+fwrite($pr_log, "\n");
+fclose($pr_log);
+
+if ($pr['action'] == 'closed' && $pr['target'] == 'master' && $pr['merged_at'] != '') {
+
+  $url = 'https://{{ setup_jenkins_url }}/buildByToken/buildWithParameters?job={{ setup_jenkins_github_deploy }}&token={{ setup_jenkins_github_deploy_key }}&CLEAN=' . strtolower($filename) . '-deploy.txt&RUN_ON=' . $runon;
+
+  //open connection
+  $ch = curl_init();
+
+  //set the url, number of POST vars, POST data
+  curl_setopt($ch, CURLOPT_URL, $url);
+
+  //execute post
+  $result = curl_exec($ch);
+
+  //close connection
+  curl_close($ch);
+
+  header('Content-Type: application/json');
+  $pr['response'] = 'cleanup ran';
+  echo json_encode($pr);
+}
+else {
+  header('Content-Type: application/json');
+  $pr['response'] = 'Nothing to do';
+  echo json_encode($pr);
+}

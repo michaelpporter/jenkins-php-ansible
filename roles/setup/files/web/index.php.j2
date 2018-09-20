@@ -1,0 +1,258 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+
+<head>
+
+    <title>Staging server development</title>
+    <style media="screen" type="text/css">
+        /* <!-- */
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #header h1,
+        #header h2,
+        #header p {
+            margin-left: 2%;
+            padding-right: 2%;
+        }
+
+        #active2 #tab2,
+        #active3 #tab3,
+        #active4 #tab4,
+        #active5 #tab5 {
+            font-weight: bold;
+            text-decoration: none;
+            color: #000;
+        }
+
+        #footer {
+            clear: both;
+            float: left;
+            width: 100%;
+        }
+
+        #footer p {
+            margin-left: 2%;
+            padding-right: 2%;
+        }
+
+        /* Start of Column CSS */
+        #container4 {
+            clear: left;
+            float: left;
+            width: 100%;
+            overflow: hidden;
+            background: #DEDEDE; /* column 4 background colour */
+        }
+
+        #container3 {
+            clear: left;
+            float: left;
+            width: 100%;
+            position: relative;
+            right: 25%;
+            background: #f7f7f7; /* column 3 background colour */
+        }
+
+        #container2 {
+            clear: left;
+            float: left;
+            width: 100%;
+            position: relative;
+            right: 25%;
+            background: #DEDEDE; /* column 2 background colour */
+        }
+
+        #container1 {
+            float: left;
+            width: 100%;
+            position: relative;
+            right: 25%;
+            background: #f7f7f7; /* column 1 background colour */
+        }
+
+        #col1 {
+            float: left;
+            width: 21%;
+            position: relative;
+            left: 77%;
+            overflow: hidden;
+        }
+
+        #col2 {
+            float: left;
+            width: 21%;
+            position: relative;
+            left: 81%;
+            overflow: hidden;
+        }
+
+        #col3 {
+            float: left;
+            width: 21%;
+            position: relative;
+            left: 85%;
+            overflow: hidden;
+        }
+
+        #col4 {
+            float: left;
+            width: 21%;
+            position: relative;
+            left: 89%;
+            overflow: hidden;
+        }
+
+        dt {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        dd {
+            margin-bottom: 7px;
+        }
+
+        a {
+            text-decoration: none;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        div#col2 dd a,
+        div#col4 a {
+
+            color: #435088 !important;
+        }
+
+        div#col1 dd a,
+        div#col3 dd a {
+            color: #435088 !important;
+        }
+
+        /* --> */
+    </style>
+</head>
+
+<body>
+<CENTER>
+    <FONT COLOR=Green>Go to:</FONT>
+    <A HREF="#A">A</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#B">B</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#C">C</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#D">D</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#E">E</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#F">F</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#G">G</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#H">H</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#I">I</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#J">J</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#K">K</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#L">L</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#M">M</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#N">N</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#O">O</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#P">P</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#Q">Q</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#R">R</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#S">S</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#T">T</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#U">U</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#V">V</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#W">W</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#X">X</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#Y">Y</A>
+    <FONT COLOR=Green>|</FONT> <A HREF="#Z">Z</A>
+</CENTER>
+<div id="container4">
+    <div id="container3">
+        <div id="container2">
+            <div id="container1">
+
+
+				<?php
+				//    error_reporting(E_ALL);
+				// ini_set("display_errors", 1);
+				$all          = array_filter( glob( '../../*' ), 'is_dir' );
+				$working       = array_filter( glob( '../../*@*' ), 'is_dir' );
+				$clean = array_diff($all, $working);
+				$dirs = array_combine(range(1, count($clean)), array_values($clean));
+				$col           = [];
+				$colnum        = 0;
+				$colnumcount   = 0;
+				$col[1]        = '';
+				$col[2]        = '';
+				$col[3]        = '';
+				$sitestart     = '';
+				$lastsitestart = '';
+				$contuned      = '';
+				$split         = ceil( count( $dirs ) / 3 );
+				$arraycols     = array_chunk( $dirs, $split );
+				foreach ( $arraycols as &$dirs2 ) {
+					$sitestart = '';
+					$colnum    = $colnum + 1;
+					foreach ( $dirs2 as &$value ) {
+						$site = substr( $value, 6 );
+						if ( $sitestart != substr( $site, 0, 1 ) ) {
+							$sitestart = substr( $site, 0, 1 );
+							if ( $lastsitestart == $sitestart ) {
+								$contuned = ' Cont.';
+							}
+							$col[ $colnum ] .= '<dt><a name="' . strtoupper( $sitestart ) . $contuned . '" ></a>' . strtoupper( $sitestart ) . $contuned . '</dt>';
+							$lastsitestart  = $sitestart;
+							$contuned       = '';
+						}
+						$col[ $colnum ] .= '<dd><a href="https://' . $site . '.{{ ansible_nodename }}.{{base_web_domain}}">' . $site . '</a></dd>';
+					}
+				}
+				?>
+
+
+                <div id="col1">
+                    <!-- Column one start -->
+                    <dl>
+						<?php echo $col[1]; ?>
+                    </dl>
+                    <!-- Column one end -->
+                </div>
+                <div id="col2">
+                    <!-- Column two start -->
+                    <dl>
+						<?php echo $col[2]; ?>
+                    </dl>
+                    <!-- Column two end -->
+                </div>
+                <div id="col3">
+                    <!-- Column three start -->
+                    <dl>
+						<?php echo $col[3]; ?>
+                    </dl>
+                    <!-- Column three end -->
+                </div>
+                <div id="col4">
+                    <!-- Column four start -->
+                    <ul>
+                        {% for host in setup_servers %}
+                        <li><a href="https://{{ hostvars[host].ansible_nodename }}.{{ hostvars[host].ansible_nodename }}.{{base_web_domain}}">{{ hostvars[host].ansible_nodename }}</a></li>
+                        {% endfor %}
+                    </ul>
+                    <ul>
+                        <li><a href="http://{{jenkins_vhost}}">Jenkins</a>
+                        <li><a href="http://www.webpagetest.org">Webpage Test</a></li>
+                        <li><a href="usage.txt">usage.txt</a></li>
+                        <li><a href="phpinfo.php">phpinfo.php</a></li>
+                        <li><a href="slack.php">Slack Users</a></li>
+                        <li><a href="dad.php">icanhazdadjoke.com</a></li>
+                    </ul>
+                    <!-- Column four end -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

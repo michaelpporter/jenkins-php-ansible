@@ -1,0 +1,23 @@
+apache_mods_enabled:
+  - rewrite.load
+  - ssl.load
+  - vhost_alias.load
+  - expires.load
+  - auth_basic.load
+  - mpm_prefork.load
+  - include.load
+apache_mods_disabled:
+  - mpm_event.load
+  - mpm_worker.load
+
+php_packages_extra:
+  - libapache2-mod-php5.6
+  - php5.6-mcrypt
+  - php5.6-intl
+  - php5.6-xsl
+  - php5.6-zip
+  - php5.6-imagick
+  - php5.6-mbstring
+  - php5.6-curl
+
+php_version: '5.6'

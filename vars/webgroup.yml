@@ -1,0 +1,120 @@
+# Adminer
+adminer_add_apache_config: true
+
+certbot_create_command: "certbot certonly --noninteractive --dns-cloudflare --agree-tos --email {{ cert_item.email | default(certbot_admin_email) }} -d {{ cert_item.domains | join(',') }}"
+certbot_certs:
+  - email: "{{ certbot_email }}"
+    domains:
+      - "*.{{ansible_nodename}}.{{base_web_domain}}"
+certbot_create_method: standalone
+certbot_create_standalone_stop_services: []
+
+
+# Apache
+apache_remove_default_vhost: true
+apache_ignore_missing_ssl_certificate: true
+apache_global_vhost_settings: |
+  DirectoryIndex index.php index.html index.shtml
+apache_vhosts:
+  - servername: "{{ansible_nodename}}.{{base_web_domain}}"
+    extra_parameters: |
+      VirtualDocumentRoot /var/www/%1/web
+      UseCanonicalName Off
+      RewriteEngine On
+      RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+      RewriteRule ^(.*)$ http://%1 [R=301,L]
+      ErrorLog ${APACHE_LOG_DIR}/error.log
+      <Directory "/srv/dev/%1/web">
+        AllowOverride AuthConfig FileInfo Indexes Limit Options=Indexes,MultiViews
+        Options FollowSymLinks
+        AllowOverride All
+        <RequireAny>
+          # localhost
+          Require ip {{ ansible_default_ipv4.address }}
+          Require ip 127.0.0.1
+          AuthType Basic
+          AuthName "DevOps only"
+          AuthUserFile /etc/apache2/passwdfile
+          Require valid-user
+        </RequireAny>
+      </Directory>
+      <Location "/robots.txt">
+        SetHandler None
+        Require all granted
+      </Location>
+      <FilesMatch \.php$>
+        SetHandler "proxy:unix:/var/run/php/php{{ php_version }}-fpm.sock|fcgi://localhost"
+      </FilesMatch>
+      Alias /robots.txt /var/hthelpers/robots.txt
+      LogFormat "%V %h %l %u %t \"%r\" %s %b" vcommon
+      php_admin_value auto_prepend_file /var/hthelpers/setdocroot.php
+apache_vhosts_ssl:
+  - servername: "{{ansible_nodename}}.{{base_web_domain}}"
+    certificate_file: "/etc/letsencrypt/live/{{ansible_nodename}}.{{base_web_domain}}/fullchain.pem"
+    certificate_key_file: "/etc/letsencrypt/live/{{ansible_nodename}}.{{base_web_domain}}/privkey.pem"
+    extra_parameters: |
+      VirtualDocumentRoot /var/www/%1/web
+      UseCanonicalName Off
+      ErrorLog ${APACHE_LOG_DIR}/error.log
+      <Directory "/srv/dev/%1/web">
+        AllowOverride AuthConfig FileInfo Indexes Limit Options=Indexes,MultiViews
+        Options FollowSymLinks
+        AllowOverride All
+        <RequireAny>
+          # localhost
+          Require ip {{ ansible_default_ipv4.address }}
+          Require ip 127.0.0.1
+          AuthType Basic
+          AuthName "DevOps only"
+          AuthUserFile /etc/apache2/passwdfile
+          Require valid-user
+        </RequireAny>
+      </Directory>
+      <Location "/robots.txt">
+        SetHandler None
+        Require all granted
+      </Location>
+      <FilesMatch \.php$>
+        SetHandler "proxy:unix:/var/run/php/php{{ php_version }}-fpm.sock|fcgi://localhost"
+      </FilesMatch>
+      Alias /robots.txt /var/hthelpers/robots.txt
+      LogFormat "%V %h %l %u %t \"%r\" %s %b" vcommon
+      php_admin_value auto_prepend_file /var/hthelpers/setdocroot.php
+
+
+# nodejs
+nodejs_version: "8.x"
+nodejs_install_npm_user: "git"
+
+# mySQL
+mysql_user_home: /root
+mysql_root_username: root
+mysql_root_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          32656431663630656231333435393363623063613263636464386431383661636639343639343166
+          6637626330376131636234323533366633363431303865350a343162386661623734353861616363
+          66636331653565386535313638393235383138616162353836303431623261343436363739393234
+          3764333633663332650a306364633435353165326264643739386435613437663837653265656232
+          31633436313738393831333438313166633835323430623432643866613331383864
+mysql_root_password_update: no
+mysql_enabled_on_startup: yes
+mysql_config_include_files:
+  - src: files/mysql/sql_mode.cnf
+
+# PEAR
+php_pear_libraries: []
+
+# PHP
+php_install_recommends: no
+php_memory_limit: "256M"
+php_display_errors: "On"
+php_display_startup_errors: "On"
+php_realpath_cache_size: "1024K"
+php_opcache_enabled_in_ini: true
+php_opcache_memory_consumption: "192"
+php_opcache_max_accelerated_files: 4096
+php_max_input_vars: "4000"
+php_upload_max_filesize: "64M"
+php_max_file_uploads: "20"
+php_post_max_size: "32M"
+php_date_timezone: "America/Chicago"

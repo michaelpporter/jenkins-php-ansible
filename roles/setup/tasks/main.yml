@@ -1,0 +1,199 @@
+---
+# tasks file for setup
+
+  - name: Create Local Scripts folder
+    file:
+      path: /usr/local/scripts
+      state: directory
+      mode: 0775
+  - name: Copy Local Scripts
+    copy:
+      src: "{{ item }}"
+      dest: /usr/local/scripts/
+      owner: root
+      mode: 0755
+    with_fileglob:
+      - files/scripts/*
+
+  - name: Copy Local Scripts
+    copy:
+      src: "{{ item }}"
+      dest: /usr/local/bin/
+      owner: root
+      mode: 0755
+    with_fileglob:
+      - files/bin/*
+
+  - name: Config Template
+    template:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      owner: "{{user_sudouser_username}}"
+      group: www-data
+      mode: 0755
+    with_items:
+      - { src: 'files/templates/config.j2', dest: '/usr/local/scripts/config.sh' }
+
+  - name: Get software for apt repository management.
+    apt: name={{ item }} state=present
+    with_items:
+      - aptitude
+      - build-essential
+      - cpanminus
+      - curl
+      - imagemagick
+      - libcache-cache-perl
+      - libdbd-mysql-perl
+      - libdbi-perl
+      - libffi-dev
+      - libssl-dev
+      - librose-datetime-perl
+      - libtext-csv-perl
+      - libtext-csv-xs-perl
+      - ntp
+      - pdftk
+      - perl
+      - php-pear
+      - python-apt
+      - python-dev
+      - python-pycurl
+      - ruby-dev
+      - s3cmd
+      - sshpass
+      - unzip
+
+  - name: Install iTerm shell intergration
+    get_url:
+      url: https://iterm2.com/misc/install_shell_integration.sh
+      dest: /usr/bin/iterm2
+      mode: 0755
+
+  - name: Create Jenkins-sites
+    file:
+      path: /var/jenkins-sites
+      owner: git
+      group: www-data
+      state: directory
+      mode: 0775
+  - name: Create Jenkins folder
+    file:
+      path: /var/jenkins
+      owner: git
+      group: www-data
+      state: directory
+      mode: 0775
+  - name: Create build folder
+    file:
+      path: /var/build
+      owner: git
+      group: www-data
+      state: directory
+      mode: 0775
+
+  - name: Create hthelpers folder
+    file:
+      path: /var/hthelpers
+      state: directory
+      mode: 0775
+  - name: Copy hthelpers Scripts
+    copy:
+      src: "{{ item }}"
+      dest: /var/hthelpers
+      owner: root
+      group: root
+      mode: 644
+    with_fileglob:
+      - files/hthelpers/*
+
+  - name: Create Local Hosting folder
+    file:
+      path: /var/www/{{ ansible_nodename }}/web
+      owner: git
+      group: www-data
+      state: directory
+      mode: 0775
+
+  - name: Web Server Templates 
+    template:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      owner: "{{user_sudouser_username}}"
+      group: www-data
+      mode: 0755
+    with_items:
+      - { src: 'files/web/dad.php.j2', dest: '/var/www/{{ ansible_nodename }}/web/dad.php' }
+      - { src: 'files/web/index.php.j2', dest: '/var/www/{{ ansible_nodename }}/web/index.php' }
+      - { src: 'files/web/phpinfo.php.j2', dest: '/var/www/{{ ansible_nodename }}/web/phpinfo.php' }
+
+  - name: web File Templates 
+    template:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      owner: "{{user_sudouser_username}}"
+      group: www-data
+      mode: 0755
+    with_items:
+      - { src: 'files/web/beanstalk-cleanup.php.j2', dest: '/var/www/{{ ansible_nodename }}/web/beanstalk-cleanup.php' }
+      - { src: 'files/web/cleanupjenkins.php.j2', dest: '/var/www/{{ ansible_nodename }}/web/cleanupjenkins.php' }
+      - { src: 'files/web/github-check.php.j2', dest: '/var/www/{{ ansible_nodename }}/web/github-check.php' }
+      - { src: 'files/web/github-log.php.j2', dest: '/var/www/{{ ansible_nodename }}/web/github-log.php' }
+      - { src: 'files/web/github-pr.php.j2', dest: '/var/www/{{ ansible_nodename }}/web/github-pr.php' }
+      - { src: 'files/web/github.php.j2', dest: '/var/www/{{ ansible_nodename }}/web/github.php' }
+      - { src: 'files/web/slack.php.j2', dest: '/var/www/{{ ansible_nodename }}/web/slack.php' }
+    when: "'webgroup' in group_names"
+
+  - name: Clean html folder
+    file:
+      state: absent
+      path: "/var/www/html/"
+
+  - name: Usage Script
+    template:
+      src: files/usage.j2
+      dest: /usr/local/bin/usage.sh
+      owner: root
+      group: root
+      mode: 0755
+  - cron:
+      name: "Write Usage"
+      minute: "*/15"
+      hour: "*"
+      job: "/usr/local/bin/usage.sh > /dev/null"
+
+  - name: Sites Script
+    template:
+      src: files/sites.j2
+      dest: /usr/local/bin/sites.sh
+      owner: root
+      group: root
+      mode: 0755
+  - cron:
+      name: "Write Sites"
+      minute: "*/15"
+      hour: "*"
+      job: "/usr/local/bin/sites.sh > /dev/null"
+
+
+  - name: Install certbot-dns-cloudflare
+    shell: "cd /opt/certbot/certbot-dns-cloudflare && python setup.py install"
+    when: "'webgroup' in group_names"
+  - name: Create certbot folder - sudouser
+    file:
+      path: /etc/letsencrypt
+      state: directory
+      owner: root
+      group: root
+      mode: 0700
+    when: "'webgroup' in group_names"
+  - name: Certbot Template
+    template:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      owner: root
+      group: root
+      mode: 0600
+    with_items:
+      - { src: 'files/templates/confcloudflare.ini.j2', dest: '/etc/letsencrypt/dnscloudflare.ini' }
+      - { src: 'files/templates/letsencrypt_cli.ini.j2', dest: '/etc/letsencrypt/cli.ini' }
+    when: "'webgroup' in group_names"
+

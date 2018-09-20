@@ -1,0 +1,156 @@
+# cerbot
+certbot_create_command: "{{ certbot_script }} certonly --standalone --noninteractive --agree-tos --email {{ cert_item.email | default(certbot_admin_email) }} -d {{ cert_item.domains | join(',') }}"
+certbot_create_method: standalone
+certbot_create_standalone_stop_services: []
+
+# Apache
+apache_remove_default_vhost: true
+
+apache_mods_enabled:
+  - rewrite.load
+  - ssl.load
+  - vhost_alias.load
+  - expires.load
+  - mpm_prefork.load
+  - auth_basic.load
+  - include.load
+  - proxy.load
+  - proxy_http.load
+  - headers.load
+apache_mods_disabled:
+  - mpm_event.load
+  - mpm_worker.load
+  - proxy_balancer.load
+apache_vhosts:
+  - servername: "{{ jenkins_vhost }}"
+    extra_parameters: |
+      Redirect permanent / https://{{ jenkins_vhost }}/
+apache_vhosts_ssl:
+  - servername: "{{ jenkins_vhost }}"
+    certificate_file: "/etc/letsencrypt/live/{{ jenkins_vhost }}/fullchain.pem"
+    certificate_key_file: "/etc/letsencrypt/live/{{ jenkins_vhost }}/privkey.pem"
+    extra_parameters: |
+      ServerAdmin  {{ jenkins_email }}
+      ProxyRequests     Off
+      ProxyPreserveHost On
+      <Proxy *>
+        Order deny,allow
+        Allow from all
+      </Proxy>
+      ProxyPass         /  http://127.0.0.1:8080/ nocanon
+      ProxyPassReverse  /  http://127.0.0.1:8080/
+      ProxyPassReverse  /  https://{{ jenkins_vhost }}/
+      RequestHeader set X-Forwarded-Proto "https"
+      RequestHeader set X-Forwarded-Port "443"
+      AllowEncodedSlashes NoDecode
+      Header edit Location ^https://{{ jenkins_vhost }}/ https://{{ jenkins_vhost }}/
+apache_ssl_protocol: "All -SSLv2 -SSLv3"
+apache_ssl_cipher_suite: "AES256+EECDH:AES256+EDH"
+
+certbot_certs:
+  - email: "{{ certbot_email }}"
+    domains:
+      - "{{ jenkins_vhost }}"
+
+# Jenkins
+jenkins_hostname: "{{ jenkins_vhost }}"
+jenkins_package_state: latest
+jenkins_plugins_state: latest
+jenkins_plugins:
+  - ace-editor
+  - analysis-core
+  - ansicolor
+  - ant
+  - antisamy-markup-formatter
+  - apache-httpcomponents-client-4-api
+  - authentication-tokens
+  - bitbucket
+  - bouncycastle-api
+  - branch-api
+  - build-timeout
+  - build-timestamp
+  - checkstyle
+  - cloudbees-bitbucket-branch-source
+  - cloudbees-folder
+  - cloverphp
+  - conditional-buildstep
+  - config-file-provider
+  - crap4j
+  - credentials
+  - credentials-binding
+  - display-url-api
+  - docker-commons
+  - docker-workflow
+  - dry
+  - durable-task
+  - email-ext
+  - embeddable-build-status
+  - external-monitor-job
+  - git
+  - git-client
+  - git-server
+  - github
+  - github-api
+  - github-branch-source
+  - handlebars
+  - handy-uri-templates-2-api
+  - htmlpublisher
+  - jackson2-api
+  - javadoc
+  - jdepend
+  - jquery
+  - jquery-detached
+  - jsch
+  - junit
+  - lockable-resources
+  - mailer
+  - matrix-auth
+  - matrix-project
+  - maven-plugin
+  - mercurial
+  - momentjs
+  - nodelabelparameter
+  - pipeline-build-step
+  - pipeline-github-lib
+  - pipeline-graph-analysis
+  - pipeline-input-step
+  - pipeline-milestone-step
+  - pipeline-model-api
+  - pipeline-model-declarative-agent
+  - pipeline-model-definition
+  - pipeline-model-extensions
+  - pipeline-rest-api
+  - pipeline-stage-step
+  - pipeline-stage-tags-metadata
+  - pipeline-stage-view
+  - plain-credentials
+  - plot
+  - pmd
+  - rebuild
+  - resource-disposer
+  - role-strategy
+  - run-condition
+  - scm-api
+  - script-security
+  - slack
+  - ssh
+  - ssh-agent
+  - ssh-credentials
+  - ssh-slaves
+  - structs
+  - token-macro
+  - violations
+  - warnings
+  - workflow-aggregator
+  - workflow-api
+  - workflow-basic-steps
+  - workflow-cps
+  - workflow-cps-global-lib
+  - workflow-durable-task-step
+  - workflow-job
+  - workflow-multibranch
+  - workflow-scm-step
+  - workflow-step-api
+  - workflow-support
+  - ws-cleanup
+  - xunit

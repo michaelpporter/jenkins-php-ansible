@@ -1,0 +1,107 @@
+---
+  # tasks file for users
+  - name: 'Ensure group git exists'
+    group:
+      name: git
+      state: present
+  - name: 'Ensure user git exists'
+    user:
+      name: git
+      password: "{{ user_git_password }}"
+      group: www-data
+      groups: # Empty by default, here we give it some groups
+        - sudo
+        - git
+        - adm
+      state: present
+      shell: /bin/bash       # Defaults to /bin/bash
+      home: /home/git  # Defaults to /home/<username>
+
+  - name: Create .ssh folder - git
+    file:
+      path: /home/git/.ssh
+      state: directory
+      owner: git
+      group: git
+      mode: 0700
+
+  - name: Set authorized key for user git
+    authorized_key:
+      user: git
+      state: present
+      key: '{{ item }}'
+    with_file: '{{ user_git_ssh_add_keys }}'
+
+  - name: Remove authorized key for user git
+    authorized_key:
+      user: git
+      state: absent
+      key: '{{ item }}'
+    with_file: '{{ user_git_ssh_remove_keys }}'
+  - name: Allow git to have passwordless sudo
+    lineinfile:
+      dest: /etc/sudoers
+      state: present
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+      validate: visudo -cf %s
+    with_items:
+      - { regexp: '^git(.*)bin\/fdperms$', line: 'git ALL=(ALL:ALL) NOPASSWD:/usr/local/bin/fdperms' }
+      - { regexp: '^git(.*)bin\/newmysqlsingle', line: 'git ALL=(ALL:ALL) NOPASSWD:/usr/local/bin/newmysqlsingle' }
+      - { regexp: '^git(.*)bin\/setgituser$', line: 'git ALL=(ALL:ALL) NOPASSWD:/usr/local/bin/setgituser' }
+      - { regexp: '^git(.*)scripts\/showmysql$', line: 'git ALL=(ALL:ALL) NOPASSWD:/usr/local/scripts/showmysql' }
+      - { regexp: '^git(.*)ALL$', line: 'git ALL=(www-data) NOPASSWD: ALL' }
+
+  - name: Add CD to webroot
+    lineinfile:
+      dest: /home/git/.bashrc
+      state: present
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+    with_items:
+      - { regexp: '^export(.*)/var/composer/vendor/bin/$', line: 'export PATH=$PATH:/var/composer/vendor/bin/' }
+      - { regexp: '^cd /var/www/$', line: 'cd /var/www/' }
+
+  - name: Create node_modules folder
+    file:
+      path: /usr/lib/node_modules
+      state: directory
+      owner: git
+      group: git
+      mode: 0775
+
+  - name: Clean gitconfig root
+    file:
+      state: absent
+      path: "/root/.gitconfig"
+
+  - git_config:
+      name: user.email
+      scope: system
+      value: "{{user_git_email_address}}"
+  - git_config:
+      name: user.name
+      scope: system
+      value: "{{user_git_full_name}}"
+  - git_config:
+      name: core.editor
+      scope: system
+      value: "{{user_git_editor}}"
+  - git_config:
+      name: color.ui
+      scope: system
+      value: auto
+  - git_config:
+      name: push.default
+      scope: system
+      value: matching
+  - git_config:
+      name: alias.ci
+      scope: system
+      value: commit
+  - git_config:
+      name: alias.st
+      scope: system
+      value: status
+  - git_config:
+      list_all: yes

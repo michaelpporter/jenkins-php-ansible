@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ `whoami` != "root" ]; then
+        echo This script needs to be run as root.
+        exit 1
+fi
+
+chown -R git:www-data /var/livedb/*.sql.gz
+chown -R git:www-data /var/jenkins-sites/*.txt
+chown -R git:www-data /var/jenkins/
+
+echo done!
+

@@ -1,0 +1,74 @@
+- hosts: demogroup
+  remote_user: demo
+  become: true
+  gather_facts: false
+  pre_tasks:
+  - name: Install python for Ansible
+    raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+    changed_when: False
+  - setup: # aka gather_facts
+  - name: set timezone to America/Chicago
+    timezone:
+      name: America/Chicago
+  - name: gather os specific variables
+    include_vars: "{{ item }}"
+    with_first_found:
+      - "{{ ansible_distribution }}-{{ php_version }}.yml"
+      - "{{ ansible_distribution }}.yml"
+    tags: vars
+  - name: gather apache variables
+    include_vars: "{{ item }}"
+    with_first_found:
+      - "{{ inventory_hostname }}.yml"
+      - "webgroup.yml"
+    tags: vars
+  vars_files:
+    - vars/main-vars.yml
+
+  roles:
+    - users
+    - role: geerlingguy.pip
+      when: "'webgroup' in group_names"
+    - { role: geerlingguy.certbot, certbot_certs: [] }
+    - role: setup
+      when: "'webgroup' in group_names"
+    - geerlingguy.postfix
+    - geerlingguy.certbot
+    - geerlingguy.git
+    - andrewrothstein.hub
+    - role: geerlingguy.java
+      when: "'jenkins' in group_names"
+    - role: geerlingguy.jenkins
+      when: "'jenkins' in group_names"
+    - role: oefenweb.swapfile
+      check_mode: no
+    - role: pedrocarmona.github-git-lfs
+      when: "'webgroup' in group_names"
+    - geerlingguy.apache
+    - role: geerlingguy.php-versions
+      when: "'webgroup' in group_names"
+    - role: geerlingguy.php
+      when: "'webgroup' in group_names"
+    - role: geerlingguy.apache-php-fpm
+      when: "'webgroup' in group_names"
+    - role: geerlingguy.composer
+      when: "'webgroup' in group_names"
+    - role: geerlingguy.php-mysql
+      when: "'webgroup' in group_names"
+    - role: geerlingguy.mysql
+      when: "'webgroup' in group_names"
+    - role: geerlingguy.adminer
+      when: "'webgroup' in group_names"
+    - role: geerlingguy.drush
+      when: "'webgroup' in group_names"
+    - role: geerlingguy.nodejs
+      when: "'webgroup' in group_names"
+    - role: sbaerlocher.wp-cli
+      when: "'webgroup' in group_names"
+    - role: wtanaka.jq
+      when: "'webgroup' in group_names"
+    - role: logwatch
+      when: "'webgroup' in group_names"
+    - role: config
+      when: "'webgroup' in group_names"
+

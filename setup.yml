@@ -1,0 +1,32 @@
+- hosts: demogroup
+  remote_user: root
+  become: false
+  gather_facts: false
+  pre_tasks:
+  - name: Change ssh port to 22
+    set_fact:
+      ansible_port: 22
+  - name: Install python for Ansible
+    raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+    changed_when: False
+  - setup: # aka gather_facts
+  - name: gather os specific variables
+    include_vars: "{{ item }}"
+    with_first_found:
+      - "{{ ansible_distribution }}-{{ php_version }}.yml"
+      - "{{ ansible_distribution }}.yml"
+    tags: vars
+  - name: gather apache variables
+    include_vars: "{{ item }}"
+    with_first_found:
+      - "{{ inventory_hostname }}.yml"
+      - "webgroup.yml"
+    tags: vars
+  - name: set timezone to America/Chicago
+    timezone:
+      name: America/Chicago
+  vars_files:
+    - vars/main-vars.yml
+
+  roles:
+    - users

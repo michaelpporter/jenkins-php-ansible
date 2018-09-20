@@ -1,0 +1,60 @@
+#!/bin/sh
+#
+# Our main directory for holding websites
+#
+ROOT=/var/www
+
+export DRUSH_OPTIONS="-q"
+#export DRUSH_OPTIONS="-v" # Debugging
+
+#
+# Errors are fatal
+#
+set -e
+
+#
+# Loop through our sites to run crontabs on
+#
+cd /var/www
+pwd
+ for D in *; do
+     if [  -d  "${D}" -a ! -h "${D}" ]; then
+ 	if [ -e ${D}/web/cron.php ];then
+	    echo "${D}"   # your processing here
+	    cd "${D}"
+   	    cd www
+   	    pwd
+	    set +e
+    # drush dis backup_migrate -y
+    # drush bam-destinations
+
+	    if (drush pm-list --pipe --type=module --status=enabled --no-core | grep 'backup_migrate'); then
+		echo 'disable backup and migrate on stage'
+		drush dis backup_migrate -y
+	    fi
+	    if (drush pm-list --pipe --type=module --status=enabled --no-core | grep 'elysia_cron'); then
+	      echo 'elysia_cron'
+	      drush -q elysia-cron run
+	    else
+	      echo 'cron'
+	      drush -q cron
+	    fi
+
+	    set -e
+	    cd /var/www
+	fi
+        if [ -e ${D}/web/wp-cron.php ];then
+            echo "${D}"   # your processing here
+            cd "${D}"
+            cd www
+            pwd
+            set +e
+	    wp plugin deactivate updraftplus --allow-root
+  	    wp cron event run --due-now --allow-root
+            set -e
+            cd /var/www
+	fi
+         #echo "${D}"   # your processing here
+     fi
+ done
+

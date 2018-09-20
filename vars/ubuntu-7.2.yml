@@ -1,0 +1,23 @@
+apache_mods_enabled:
+  - rewrite.load
+  - ssl.load
+  - vhost_alias.load
+  - expires.load
+  - mpm_prefork.load
+  - auth_basic.load
+  - include.load
+apache_mods_disabled:
+  - mpm_event.load
+  - mpm_worker.load
+
+php_packages_extra:
+  - libapache2-mod-php7.2
+  - php7.2-mcrypt
+  - php7.2-intl
+  - php7.2-xsl
+  - php7.2-zip
+  - php7.2-imagick
+  - php7.2-mbstring
+  - php7.2-curl
+
+php_version: '7.2'

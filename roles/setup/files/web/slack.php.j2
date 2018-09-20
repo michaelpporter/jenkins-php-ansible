@@ -1,0 +1,47 @@
+<?php
+
+
+
+
+$url = "https://slack.com/api/users.list?token={{ setup_slack_api }}&presence=true&users.list";
+//open connection
+$result = json_decode(file_get_contents($url));
+$count = 0;
+foreach ($result as $key => $value) {
+  if ($key == 'members') {
+    foreach ($value as $key2 => $value2) {
+      if (!$value2->deleted && !$value2->is_bot) {
+        $new_array[$count]['Jenkinsfile'] = "<@$value2->id|$value2->name>";
+        $new_array[$count]['name'] = $value2->name;
+        $new_array[$count]['real_name'] = $value2->real_name;
+        // $new_array[$count]['email'] = $value2->profile->email;
+        // $new_array[$count]['deleted'] = $value2->deleted;
+        // $new_array[$count]['is_bot'] = $value2->is_bot;
+        $count = $count + 1;
+     }
+    }
+  }
+
+}
+
+// echo "<pre>";
+// var_dump($new_array);
+// echo "</pre>";
+?>
+
+<?php if (count($new_array) > 0): ?>
+<table>
+  <thead>
+    <tr>
+      <th><?php echo implode('</th><th>', array_keys(current($new_array))); ?></th>
+    </tr>
+  </thead>
+  <tbody>
+<?php foreach ($new_array as $row): array_map('htmlentities', $row); ?>
+    <tr>
+      <td><?php echo implode('</td><td>', $row); ?></td>
+    </tr>
+<?php endforeach; ?>
+  </tbody>
+</table>
+<?php endif; ?>

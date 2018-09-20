@@ -1,0 +1,15 @@
+---
+# defaults file for config
+
+config_htaccess_user: "user"
+config_htaccess_pass: "passwrd"
+
+config_postfix_use_gmail: false
+config_postfix_smtp: "[smtp.gmail.com]:587"
+config_postfix_gmail_address: "user@example.com"
+# ansible-vault encrypt_string  'password string value' --name 'config_postfix_gmail_pass'
+config_postfix_gmail_pass: ''
+config_postfix_allowed:
+  - example.com
+
+config_terminus_ci: false

@@ -1,0 +1,11 @@
+<?php
+
+$myfile = fopen("ihe_log.txt", "w") or die("Unable to open file!");
+$txt = json_decode(file_get_contents('php://input'));
+fwrite($myfile, print_r($txt, true));
+fwrite($myfile, "\n");
+fwrite($myfile, "**********");
+fwrite($myfile, "\n");
+fclose($myfile);
+
+

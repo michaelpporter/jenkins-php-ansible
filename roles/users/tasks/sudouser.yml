@@ -1,0 +1,34 @@
+---
+# tasks file for users
+  - name: 'Ensure user sudouser exists'
+    user:
+      name: "{{ user_sudouser_username }}"
+      password: "{{ user_sudouser_password }}"
+      groups: # Empty by default, here we give it some groups
+        - sudo
+        - www-data
+      state: present
+      shell: /bin/bash       # Defaults to /bin/bash
+
+  - name: Set authorized key for user sudouser
+    authorized_key:
+      user: "{{ user_sudouser_username }}"
+      state: present
+      key: '{{ item }}'
+    with_file: '{{ user_sudouser_ssh_add_keys }}'
+
+  - name: Remove authorized key for user sudouser
+    authorized_key:
+      user: "{{ user_sudouser_username }}"
+      state: absent
+      key: '{{ item }}'
+    with_file: '{{ user_sudouser_ssh_remove_keys }}'
+
+  - name: Allow sudouser to have passwordless sudo
+    lineinfile:
+      dest: /etc/sudoers
+      state: present
+      regexp: '^{{ user_sudouser_username }}'
+      line: '{{ user_sudouser_username }} ALL=(ALL) NOPASSWD: ALL'
+      validate: visudo -cf %s
+

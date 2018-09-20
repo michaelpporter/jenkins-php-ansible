@@ -1,0 +1,76 @@
+---
+# tasks file for config
+
+- name: Create Terminus plugins folder
+  file:
+    path: /home/git/.terminus/plugins
+    state: directory
+    owner: git
+    group: git
+    mode: 0775
+# Clone project and install with all dependencies
+
+- stat:
+    path: /home/git/.terminus/plugins/terminus-build-tools-plugin
+  register: build_tools
+- name: Install Terminus Build Tools
+  become: true
+  become_user: git
+  composer:
+    command: create-project
+    arguments: pantheon-systems/terminus-build-tools-plugin terminus-build-tools-plugin ~1
+    working_dir: ~/.terminus/plugins
+    prefer_dist: yes
+  when: build_tools.stat.exists == False
+
+- stat:
+    path: /home/git/.terminus/plugins/terminus-secrets-plugin
+  register: secrets
+- name: Install Terminus Secrets
+  become: true
+  become_user: git
+  composer:
+    command: create-project
+    arguments: pantheon-systems/terminus-secrets-plugin terminus-secrets-plugin ~1
+    working_dir: ~/.terminus/plugins
+    prefer_dist: yes
+  when: secrets.stat.exists == False
+
+- stat:
+    path: /home/git/.terminus/plugins/terminus-composer-plugin
+  register: composer
+- name: Install Terminus Composer
+  become: true
+  become_user: git
+  composer:
+    command: create-project
+    arguments: pantheon-systems/terminus-composer-plugin terminus-composer-plugin ~1
+    working_dir: ~/.terminus/plugins
+    prefer_dist: yes
+  when: composer.stat.exists == False
+
+- stat:
+    path: /home/git/.terminus/plugins/terminus-site-status-plugin
+  register: status
+- name: Install Terminus Site Status
+  become: true
+  become_user: git
+  composer:
+    command: create-project
+    arguments: terminus-plugin-project/terminus-site-status-plugin terminus-site-status-plugin ~1
+    working_dir: ~/.terminus/plugins
+    prefer_dist: yes
+  when: status.stat.exists == False
+
+- stat:
+    path: /home/git/.terminus/plugins/terminus-quicksilver-plugin
+  register: quicksilver
+- name: Install Terminus Quicksilver
+  become: true
+  become_user: git
+  composer:
+    command: create-project
+    arguments: pantheon-systems/terminus-quicksilver-plugin terminus-quicksilver-plugin ~1
+    working_dir: ~/.terminus/plugins
+    prefer_dist: yes
+  when: quicksilver.stat.exists == False

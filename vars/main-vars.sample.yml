@@ -1,0 +1,117 @@
+# set remote ssh port to replace the default 22 for security
+remote_port: 7822
+
+# User Playbook
+# pip install passlib
+# python -c "from passlib.hash import sha512_crypt; import getpass; print(sha512_crypt.using(rounds=5000).hash(getpass.getpass()))"
+# ansible-vault encrypt_string 'outputFromPassLib' --name 'user_git_password'
+user_git_ssh_add_keys:
+  - /Users/macusername/.ssh/id_rsa.pub
+user_git_ssh_remove_keys: []
+user_git_full_name: "Michael Porter"
+user_git_email_address: "devops@example.com"
+user_git_editor: nano
+user_git_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          32383761373935663861323661666635663965313032333730636234393038633462363336376239
+          6261313238643961303662326435396664363034623565330a663533313761313331316436613865
+          63396332336463393831373936313036376462326433663239633562633736656463623932353863
+          6364326361306233300a353630376461663261393930363365663162396264376630633237393762
+          36643434646436663439333231363362306562323863623863336633633038396130
+
+user_sudouser_username: "demo"
+user_sudouser_full_name: "Michael Porter"
+user_sudouser_ssh_add_keys:
+  - /Users/macusername/.ssh/id_rsa.pub
+user_sudouser_ssh_remove_keys: []
+# pip install passlib
+# python -c "from passlib.hash import sha512_crypt; import getpass; print(sha512_crypt.using(rounds=5000).hash(getpass.getpass()))"
+# ansible-vault encrypt_string 'outputFromPassLib' --name 'user_sudouser_password'
+user_sudouser_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          38353630646338313562663236623334396164373337376238363661323339623865663436613833
+          3438373937393265643233313239653632656162666530300a313932396536376265646562666532
+          35366533663065303337653836666564643535343132353335343464363631616233613361666433
+          3534613464376339390a613663343037366461633865636239616664396364326235316231386332
+          64616436633962356131643638383135316135376636633762396230383038663164
+
+# Jenkins Playbook
+jenkins_vhost: "demojenkins.example.com"
+jenkins_email: "jenkins@example.com"
+jenkins_admin_username: admin
+jenkins_admin_password: demo
+setup_servers: "{{ groups['webgroup'] }}"
+
+certbot_email: "devops@example.com"
+certbot_create_if_missing: yes
+# Install from source to get dns plugin folders
+certbot_install_from_source: yes
+# Username for htaccess to protect stage sites
+config_htaccess_user: "user"
+# Encrypt htaccess password
+## ansible-vault encrypt_string 'passwrd' --name 'config_htaccess_pass'
+config_htaccess_pass: ''
+# base domain for webgroup hosts URL will become https://folder.webgroup01.example.com
+base_webgroup_domain: "example.com"
+# if you use gmail/gsuite and want to setup postfix as a relay set this to true
+config_postfix_use_gmail: false
+config_postfix_gmail_address: "devops@gmail.com"
+## ansible-vault encrypt_string 'passwordStringValue' --name 'config_postfix_gmail_pass'
+config_postfix_gmail_pass: ''
+# Allowed domains or address to send to, all others will be dropped.
+config_postfix_allowed: []
+  # - example.com
+  # - devops@gmail.com
+
+## Pantheon CI https://pantheon.io/docs/guides/jenkins/
+config_terminus_ci: false
+
+## ansible-vault encrypt_string 'rootpassword' --name 'mysql_root_password'
+mysql_root_password: ""
+setup_jenkins_url: "{{jenkins_vhost}}"
+setup_jenkins_github_deploy: "global-builds/pr_deploy/"
+## ansible-vault encrypt_string 'keyFromJenkinsJob' --name 'setup_jenkins_github_deploy_key'
+setup_jenkins_github_deploy_key: ''
+setup_jenkins_clean_job: "global-builds/clean-sites/"
+## ansible-vault encrypt_string 'test-token' --name 'setup_jenkins_clean_job_key'
+setup_jenkins_clean_job_key: ''
+
+setup_servers: "{{ groups['dev'] }}"
+## ansible-vault encrypt_string 'slackAPIKey' --name 'setup_slack_api'
+setup_slack_api: ''
+
+setup_dns_cloudflare_email: "cloudflare@example.com"
+# ansible-vault encrypt_string 'cloudflareAPIKey' --name 'setup_dns_cloudflare_api_key'
+setup_dns_cloudflare_api_key: ''
+
+# Logwatch Playbook
+logwatch_send_to: "mailto@example.com"
+logwatch_send_from: "mailfrom@example.com"
+
+# Composer
+composer_home_path: '/home/git/.composer'
+composer_home_owner: git
+composer_home_group: git
+composer_global_packages:
+  - { name: phpunit/phpunit, release: "4.7.*" }
+  - { name: pantheon-systems/terminus, release: "^1.8" }
+  - { name: squizlabs/php_codesniffer, release: "^2.9.1" }
+  - { name: phploc/phploc, release: "*" }
+composer_keep_updated: true
+composer_add_to_path: true
+
+# Drush
+drush_launcher_install: no
+drush_install_from_source: yes
+drush_source_install_bin_path: /usr/local/bin/drush
+drush_source_install_path: /usr/local/share/drush
+drush_source_install_version: "8.x"
+drush_keep_updated: yes
+drush_force_update: no
+
+# swap
+swapfile_size: 1GB
+my_custom_path_var: /usr/local/scripts
+
+# for jq
+package_name: jq

@@ -1,0 +1,41 @@
+---
+
+- name: Copy postfix transport
+  template:
+    src: files/postfix/transport.j2
+    dest: /etc/postfix/transport
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart postfix
+- name: Copy postfix pass
+  template:
+    src: files/postfix/sasl_passwd.j2
+    dest: /etc/postfix/sasl/sasl_passwd
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart postfix
+- name: Postmap transport
+  command: postmap /etc/postfix/transport
+  changed_when: False
+- name: Postmap pass
+  command: postmap /etc/postfix/sasl/sasl_passwd
+  changed_when: False
+
+- name: Config postfix
+  lineinfile:
+    dest: /etc/postfix/main.cf
+    state: present
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: '^transport_maps', line: 'transport_maps = hash:/etc/postfix/transport' }
+    - { regexp: '^smtpd_relay_restrictions', line: 'smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination' }
+    - { regexp: '^relayhost', line: 'relayhost = {{config_postfix_smtp}}' }
+    - { regexp: '^smtp_sasl_auth_enable', line: 'smtp_sasl_auth_enable = yes' }
+    - { regexp: '^smtp_sasl_security_options', line: 'smtp_sasl_security_options = noanonymous' }
+    - { regexp: '^smtp_sasl_password_maps', line: 'smtp_sasl_password_maps = hash:/etc/postfix/sasl/sasl_passwd' }
+    - { regexp: '^smtp_tls_security_level', line: 'smtp_tls_security_level = encrypt' }
+    - { regexp: '^smtp_tls_CAfile', line: 'smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt' }
+  notify: restart postfix

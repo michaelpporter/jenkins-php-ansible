@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#echo -n "Enter the MySQL root password: "
+#read -s rootpw
+
+source /usr/local/scripts/config.sh
+
+db="show databases;"
+mysql -u root -p$rootpw -e "$db"

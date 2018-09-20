@@ -1,0 +1,25 @@
+---
+- src: andrewrothstein.hub
+- src: geerlingguy.adminer
+- src: geerlingguy.apache
+- src: geerlingguy.apache-php-fpm
+- src: geerlingguy.certbot
+- src: geerlingguy.composer
+- src: geerlingguy.drush
+- src: geerlingguy.git
+- src: geerlingguy.java
+- src: geerlingguy.jenkins
+- src: geerlingguy.memcached
+- src: geerlingguy.mysql
+- src: geerlingguy.nodejs
+- src: geerlingguy.php
+- src: geerlingguy.php-mysql
+- src: geerlingguy.php-versions
+- src: geerlingguy.pip
+- src: geerlingguy.postfix
+- src: geerlingguy.ruby
+- src: geerlingguy.solr
+- src: oefenweb.swapfile
+- src: pedrocarmona.github-git-lfs
+- src: sbaerlocher.wp-cli
+- src: wtanaka.jq

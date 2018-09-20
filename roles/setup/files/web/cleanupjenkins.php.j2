@@ -1,0 +1,46 @@
+<?php
+
+$myfile = fopen("newfile.txt", "w") or die("Unable to open file!");
+
+$json = file_get_contents('php://input');
+$action = json_decode($json, true);
+$txt = print_r($action, true);
+fwrite($myfile, $txt);
+fclose($myfile);
+if (isset($action['payload']['repository']['name'])) {
+$filename =  $action['payload']['repository']['name'] . '-' . $action['payload']['name'];
+}
+else {
+$txt = json_decode(file_get_contents('php://input'));
+$filename =  $txt->repository->name . '-' . $txt->ref;
+}
+if (isset($_GET["base"])) {
+$filename =  $_GET["base"] . '-' . $action['payload']['name'];
+}
+
+$node = exec('consul kv get sites/' . $filename . '/server');
+$runon = 'web';
+if ($node != '') {
+  $runon = $node;
+}
+
+$url = 'https://{{ setup_jenkins_url }}/buildByToken/buildWithParameters?job={{ setup_jenkins_clean_job }}&token={{ setup_jenkins_clean_job_key }}&CLEAN=' . strtolower($filename) . '.txt&RUN_ON=' . $runon;
+
+//open connection
+$ch = curl_init();
+
+//set the url, number of POST vars, POST data
+curl_setopt($ch, CURLOPT_URL, $url);
+
+//execute post
+$result = curl_exec($ch);
+
+//close connection
+curl_close($ch);
+
+$data = array(
+  'path' => $cleanup,
+  'success' => $output,
+  );
+header('Content-Type: application/json');
+echo json_encode($data);

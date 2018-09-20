@@ -1,0 +1,60 @@
+<?php
+
+$pr_log = fopen("beanstalk_log.txt", "w") or die("Unable to open file!");
+
+$json = file_get_contents('php://input');
+$pr_data = json_decode($json, true);
+
+
+
+if (empty($pr_data["push"]["changes"][0]["new"]) && $pr_data["repository"]["name"] == 'zoomdata-docs') {
+    $filename = 'zoomdocs-' . $pr_data["push"]["changes"][0]["old"]["name"];
+    $pr['filename'] = $filename;
+    $node = exec('consul kv get sites/' . $filename . '/server');
+    $runon = 'web';
+    if ($node != '') {
+    $runon = $node;
+    }
+    $url = 'https://{{ setup_jenkins_url }}/buildByToken/buildWithParameters?job={{ setup_jenkins_clean_job }}&token={{ setup_jenkins_clean_job_key }}&CLEAN=' . strtolower($filename) . '.txt&RUN_ON=' . $runon;
+
+    //open connection
+    $ch = curl_init();
+
+    //set the url, number of POST vars, POST data
+    curl_setopt($ch, CURLOPT_URL, $url);
+
+    //execute post
+    $result = curl_exec($ch);
+
+    //close connection
+    curl_close($ch);
+
+    header('Content-Type: application/json');
+    $pr['response'] = 'cleanup ran';
+    echo json_encode($pr);
+}
+else {
+    header('Content-Type: application/json');
+    $pr['response'] = 'Nothing to do';
+    echo json_encode($pr);
+}
+
+fwrite($pr_log, "**********");
+fwrite($pr_log, "\n");
+fwrite($pr_log, "*".print_r($pr_data["push"]["changes"][0]["new"], true)."*");
+fwrite($pr_log, "\n");
+fwrite($pr_log, "**********");
+fwrite($pr_log, "\n");
+fwrite($pr_log, print_r($pr_data["push"]["changes"][0]["old"]["name"], true));
+fwrite($pr_log, "\n");
+fwrite($pr_log, "**********");
+fwrite($pr_log, "\n");
+fwrite($pr_log, print_r($pr_data["repository"]["name"], true));
+fwrite($pr_log, "\n");
+fwrite($pr_log, "**********");
+fwrite($pr_log, "\n");
+fwrite($pr_log, print_r($pr['response'], true));
+fwrite($pr_log, "\n");
+fwrite($pr_log, "**********");
+fwrite($pr_log, "\n");
+fclose($pr_log);

@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#echo -n "Enter the MySQL root password: "
+#read -s rootpw
+#echo -n "Enter database name: "
+#read dbname
+
+source /usr/local/scripts/config.sh
+database="$1"
+databaseuser="$2"
+
+db="create database $database;GRANT ALL PRIVILEGES ON $database.* TO $databaseuser@localhost IDENTIFIED BY '$databaseuser';FLUSH PRIVILEGES;"
+mysql -u root -p$rootpw -e "$db"
+#mysql -e "$db"
+
+if [ $? != "0" ]; then
+ echo "[Error]: Database creation failed"
+ exit 1
+else
+ echo "------------------------------------------"
+ echo " Database has been created successfully "
+ echo "------------------------------------------"
+ echo " DB Info: "
+ echo ""
+ echo " DB Name: $database"
+ echo " DB User: $databaseuser"
+ echo " DB Pass: $databaseuser"
+ echo ""
+ echo "------------------------------------------"
+fi

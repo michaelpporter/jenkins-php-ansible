@@ -1,0 +1,24 @@
+#!/bin/bash
+
+if [ `whoami` != "root" ]; then
+        echo This script needs to be run as root.
+        exit 1
+fi
+
+/usr/local/bin/checksites.sh
+cd /var/jenkins-sites
+
+original_string="$2-"
+
+for x in $2-*.txt; do
+#  echo $x
+  result_string="${x/$original_string/}"
+  result_string="${result_string/.txt/}"
+#  echo $result_string
+  check=`git ls-remote --heads $1 $result_string  | wc -l`
+  echo "$check"
+  if [ $check == 0 ]; then
+    echo "clean up"
+    printf `./$x`
+  fi
+done

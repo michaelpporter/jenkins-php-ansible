@@ -1,0 +1,3 @@
+#!/bin/bash
+du -hd1 /var/lib/mysql/ | sort -h -r | while read space user ; do echo -e " * $space $user\n"; done > /home/git/mysql.txt
+chown git /home/git/mysql.txt
