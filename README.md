@@ -6,6 +6,28 @@ This will not work out of the box, some setup is required.
 
 Copy `var/main-vars.sample.yml` to `var/main-vars.yml` and updated the varaibles for your setup.
 
+## Commands
+
+### First run
+
+```shell
+ansible-galaxy install -r requirements.yml -f
+ansible-playbook setup.yml
+ansible-playbook main.yml
+```
+
+### 2-N runs
+
+```shell
+ansible-playbook main.yml
+```
+
+### Adding a new webserver; i.e. web30
+
+```shell
+ansible-playbook setup.yml --limit=web03
+ansible-playbook main.yml
+```
 
 ## Local ssh config
 
