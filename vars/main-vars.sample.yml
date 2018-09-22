@@ -118,7 +118,7 @@ setup_jenkins_clean_job_key: !vault |
           6661316263386138340a613534323235376334656130323235356338613766316130366232346135
           3262
 
-setup_servers: "{{ groups['dev'] }}"
+setup_servers: "{{ groups['webgroup'] }}"
 ## ansible-vault encrypt_string 'slackAPIKey' --name 'setup_slack_api'
 setup_slack_api: ''
 

@@ -24,7 +24,7 @@ apache_vhosts:
       RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
       RewriteRule ^(.*)$ http://%1 [R=301,L]
       ErrorLog ${APACHE_LOG_DIR}/error.log
-      <Directory "/srv/dev/%1/web">
+      <Directory "/var/www">
         AllowOverride AuthConfig FileInfo Indexes Limit Options=Indexes,MultiViews
         Options FollowSymLinks
         AllowOverride All
@@ -56,7 +56,7 @@ apache_vhosts_ssl:
       VirtualDocumentRoot /var/www/%1/web
       UseCanonicalName Off
       ErrorLog ${APACHE_LOG_DIR}/error.log
-      <Directory "/srv/dev/%1/web">
+      <Directory "/var/www">
         AllowOverride AuthConfig FileInfo Indexes Limit Options=Indexes,MultiViews
         Options FollowSymLinks
         AllowOverride All

@@ -37,9 +37,9 @@
     - geerlingguy.git
     - andrewrothstein.hub
     - role: geerlingguy.java
-      when: "'jenkins' in group_names"
+      when: "'jenkinsgroup' in group_names"
     - role: geerlingguy.jenkins
-      when: "'jenkins' in group_names"
+      when: "'jenkinsgroup' in group_names"
     - role: oefenweb.swapfile
       check_mode: no
     - role: pedrocarmona.github-git-lfs
