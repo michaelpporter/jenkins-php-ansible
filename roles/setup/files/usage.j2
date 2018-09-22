@@ -2,9 +2,9 @@
 echo -e "## {{ansible_nodename}} Folders\n" > /var/www/sites/web/usage.txt
 du -hd1 /var/www/ | sort -h -r | while read space user ; do echo -e " * $space $user\n"; done >> /var/www/sites/web/usage.txt
 du -hd1 /var/build/ | sort -h -r | while read space user ; do echo -e " * $space $user\n"; done >> /var/www/sites/web/usage.txt
-echo -e "## {{ansible_nodename}} Space\n<file>\n" >> /var/www/sites/web/usage.txt
+echo -e "## {{ansible_nodename}} Space\n" >> /var/www/sites/web/usage.txt
 df -Ph / | column -t >> /var/www/sites/web/usage.txt
-echo -e "</file>\n" >> /var/www/sites/web/usage.txt
+echo -e "\n" >> /var/www/sites/web/usage.txt
 echo -e "## {{ansible_nodename}} Database folders\n\n" >> /var/www/sites/web/usage.txt
 du -hd1 /var/lib/mysql/ | sort -h -r | while read space user ; do echo -e " * $space $user\n"; done >> /var/www/sites/web/usage.txt
 echo -e "\n" >> /var/www/sites/web/usage.txt
