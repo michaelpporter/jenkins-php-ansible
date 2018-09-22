@@ -235,7 +235,7 @@
                     <!-- Column four start -->
                     <ul>
                         {% for host in setup_servers %}
-                        <li><a href="https://{{ hostvars[host].ansible_nodename }}.{{ hostvars[host].ansible_nodename }}.{{base_web_domain}}">{{ hostvars[host].ansible_nodename }}</a></li>
+                        <li><a href="https://sites.{{ hostvars[host].ansible_nodename }}.{{base_web_domain}}">{{ hostvars[host].ansible_nodename }}</a></li>
                         {% endfor %}
                     </ul>
                     <ul>

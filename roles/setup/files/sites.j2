@@ -1,7 +1,7 @@
 #!/bin/bash
 cd /var/www/
-echo -e "## {{ansible_nodename}} Sites\n" > /var/www/{{ansible_nodename}}/web/sites.txt
-echo -e " *  [{{ansible_nodename}}](https://{{ansible_nodename}}.xenostaging.com)" >> /var/www/{{ansible_nodename}}/web/sites.txt
-find . -maxdepth 1 -type d ! -name '*@*' | sort | while read space  ; do echo -e " * [https:/${space//.}.xenostaging.com](https:/${space//.}.xenostaging.com)\n"; done >> /var/www/{{ansible_nodename}}/web/sites.txt
-chown root:www-data /var/www/{{ansible_nodename}}/web/sites.txt
-chmod 755 /var/www/{{ansible_nodename}}/web/sites.txt
+echo -e "## {{ansible_nodename}} Sites\n" > /var/www/sites/web/sites.txt
+echo -e " *  [{{ansible_nodename}}](https://sites.{{ansible_nodename}}.{{base_web_domain}})" >> /var/www/sites/web/sites.txt
+find . -maxdepth 1 -type d ! -name '*@*' | sort | while read space  ; do echo -e " * [https:/${space//.}.{{ansible_nodename}}.{{base_web_domain}}](https:/${space//.}.{{ansible_nodename}}.{{base_web_domain}})\n"; done >> /var/www/sites/web/sites.txt
+chown root:www-data /var/www/sites/web/sites.txt
+chmod 755 /var/www/sites/web/sites.txt

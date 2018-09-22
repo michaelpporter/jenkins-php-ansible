@@ -107,7 +107,7 @@
 
   - name: Create Local Hosting folder
     file:
-      path: /var/www/{{ ansible_nodename }}/web
+      path: /var/www/sites/web
       owner: git
       group: www-data
       state: directory
@@ -121,9 +121,9 @@
       group: www-data
       mode: 0755
     with_items:
-      - { src: 'files/web/dad.php.j2', dest: '/var/www/{{ ansible_nodename }}/web/dad.php' }
-      - { src: 'files/web/index.php.j2', dest: '/var/www/{{ ansible_nodename }}/web/index.php' }
-      - { src: 'files/web/phpinfo.php.j2', dest: '/var/www/{{ ansible_nodename }}/web/phpinfo.php' }
+      - { src: 'files/web/dad.php.j2', dest: '/var/www/sites/web/dad.php' }
+      - { src: 'files/web/index.php.j2', dest: '/var/www/sites/web/index.php' }
+      - { src: 'files/web/phpinfo.php.j2', dest: '/var/www/sites/web/phpinfo.php' }
 
   - name: web File Templates 
     template:
@@ -133,13 +133,13 @@
       group: www-data
       mode: 0755
     with_items:
-      - { src: 'files/web/beanstalk-cleanup.php.j2', dest: '/var/www/{{ ansible_nodename }}/web/beanstalk-cleanup.php' }
-      - { src: 'files/web/cleanupjenkins.php.j2', dest: '/var/www/{{ ansible_nodename }}/web/cleanupjenkins.php' }
-      - { src: 'files/web/github-check.php.j2', dest: '/var/www/{{ ansible_nodename }}/web/github-check.php' }
-      - { src: 'files/web/github-log.php.j2', dest: '/var/www/{{ ansible_nodename }}/web/github-log.php' }
-      - { src: 'files/web/github-pr.php.j2', dest: '/var/www/{{ ansible_nodename }}/web/github-pr.php' }
-      - { src: 'files/web/github.php.j2', dest: '/var/www/{{ ansible_nodename }}/web/github.php' }
-      - { src: 'files/web/slack.php.j2', dest: '/var/www/{{ ansible_nodename }}/web/slack.php' }
+      - { src: 'files/web/beanstalk-cleanup.php.j2', dest: '/var/www/sites/web/beanstalk-cleanup.php' }
+      - { src: 'files/web/cleanupjenkins.php.j2', dest: '/var/www/sites/web/cleanupjenkins.php' }
+      - { src: 'files/web/github-check.php.j2', dest: '/var/www/sites/web/github-check.php' }
+      - { src: 'files/web/github-log.php.j2', dest: '/var/www/sites/web/github-log.php' }
+      - { src: 'files/web/github-pr.php.j2', dest: '/var/www/sites/web/github-pr.php' }
+      - { src: 'files/web/github.php.j2', dest: '/var/www/sites/web/github.php' }
+      - { src: 'files/web/slack.php.j2', dest: '/var/www/sites/web/slack.php' }
     when: "'webgroup' in group_names"
 
   - name: Clean html folder
