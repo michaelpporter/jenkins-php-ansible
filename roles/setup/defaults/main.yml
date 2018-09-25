@@ -13,5 +13,28 @@ setup_slack_api: "slackAPIKey"
 setup_memcache_password: "password"
 setup_apc_password: "password"
 
-setup_dns_cloudflare_email: ''
-setup_dns_cloudflare_api_key: ''
+setup_apt_install:
+  - aptitude
+  - build-essential
+  - cpanminus
+  - curl
+  - imagemagick
+  - libcache-cache-perl
+  - libdbd-mysql-perl
+  - libdbi-perl
+  - libffi-dev
+  - libssl-dev
+  - librose-datetime-perl
+  - libtext-csv-perl
+  - libtext-csv-xs-perl
+  - ntp
+  - pdftk
+  - perl
+  - php-pear
+  - python-apt
+  - python-dev
+  - python-pycurl
+  - ruby-dev
+  - s3cmd
+  - sshpass
+  - unzip

@@ -1,0 +1,35 @@
+- hosts: jenkinsgroup
+  remote_user: demo
+  become: true
+  gather_facts: false
+  pre_tasks:
+  - name: Install python for Ansible
+    raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+    changed_when: False
+  - setup: # aka gather_facts
+  - name: set timezone to America/Chicago
+    timezone:
+      name: America/Chicago
+  - name: gather os specific variables
+    include_vars: "{{ item }}"
+    with_first_found:
+      - "{{ ansible_distribution }}-{{ php_version }}.yml"
+      - "{{ ansible_distribution }}.yml"
+    tags: vars
+  vars_files:
+    - vars/jenkins.yml
+    - vars/main-vars.yml
+
+  roles:
+    - users
+    - geerlingguy.git
+    - andrewrothstein.hub
+    - geerlingguy.postfix
+    - geerlingguy.pip
+    - role: oefenweb.swapfile
+      check_mode: no
+    - geerlingguy.certbot
+    - geerlingguy.java
+    - geerlingguy.jenkins
+    - geerlingguy.apache
+

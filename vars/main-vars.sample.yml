@@ -51,10 +51,10 @@ certbot_create_if_missing: yes
 # Install from source to get dns plugin folders
 certbot_install_from_source: yes
 
-# Username for htaccess to protect stage sites
-setup_dns_cloudflare_email: "cloudflare@example.com"
-# ansible-vault encrypt_string 'cloudflareAPIKey' --name 'setup_dns_cloudflare_api_key'
-setup_dns_cloudflare_api_key: ''
+# Email address for Cloudflare Global API Key
+certbot_cloudflare_email: "cloudflare@example.com"
+# ansible-vault encrypt_string 'cloudflareAPIKey' --name 'certbot_cloudflare_api_key'
+certbot_cloudflare_api_key: ''
 
 
 config_htaccess_user: "demo"
@@ -164,3 +164,27 @@ my_custom_path_var: /usr/local/scripts
 # for jq
 package_name: jq
 
+setup_apt_install:
+  - aptitude
+  - build-essential
+  - cpanminus
+  - curl
+  - imagemagick
+  - libcache-cache-perl
+  - libdbd-mysql-perl
+  - libdbi-perl
+  - libffi-dev
+  - libssl-dev
+  - librose-datetime-perl
+  - libtext-csv-perl
+  - libtext-csv-xs-perl
+  - ntp
+  - perl
+  - php-pear
+  - python-apt
+  - python-dev
+  - python-pycurl
+  - ruby-dev
+  - s3cmd
+  - sshpass
+  - unzip

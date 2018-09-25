@@ -36,31 +36,7 @@
 
   - name: Get software for apt repository management.
     apt: name={{ item }} state=present
-    with_items:
-      - aptitude
-      - build-essential
-      - cpanminus
-      - curl
-      - imagemagick
-      - libcache-cache-perl
-      - libdbd-mysql-perl
-      - libdbi-perl
-      - libffi-dev
-      - libssl-dev
-      - librose-datetime-perl
-      - libtext-csv-perl
-      - libtext-csv-xs-perl
-      - ntp
-      - pdftk
-      - perl
-      - php-pear
-      - python-apt
-      - python-dev
-      - python-pycurl
-      - ruby-dev
-      - s3cmd
-      - sshpass
-      - unzip
+    with_items: "{{ setup_apt_install }}"
 
   - name: Install iTerm shell intergration
     get_url:
@@ -172,28 +148,3 @@
       minute: "*/15"
       hour: "*"
       job: "/usr/local/bin/sites.sh > /dev/null"
-
-
-  - name: Install certbot-dns-cloudflare
-    shell: "cd /opt/certbot/certbot-dns-cloudflare && python setup.py install"
-    when: "'webgroup' in group_names"
-  - name: Create certbot folder - sudouser
-    file:
-      path: /etc/letsencrypt
-      state: directory
-      owner: root
-      group: root
-      mode: 0700
-    when: "'webgroup' in group_names"
-  - name: Certbot Template
-    template:
-      src: "{{ item.src }}"
-      dest: "{{ item.dest }}"
-      owner: root
-      group: root
-      mode: 0600
-    with_items:
-      - { src: 'files/templates/confcloudflare.ini.j2', dest: '/etc/letsencrypt/dnscloudflare.ini' }
-      - { src: 'files/templates/letsencrypt_cli.ini.j2', dest: '/etc/letsencrypt/cli.ini' }
-    when: "'webgroup' in group_names"
-

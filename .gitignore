@@ -1,6 +1,5 @@
 *.retry
 vars/main-vars.yml
 files/git_user_old
-jenkins.yml
 jphp.yml
-web.yml
+test.yml
