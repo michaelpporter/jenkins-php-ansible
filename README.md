@@ -190,6 +190,8 @@ Variables for the cleanup and deploy jobs, called from GitHub webhooks.
     logwatch_send_to: "mailto@example.com"
     logwatch_send_from: "mailfrom@example.com"
 
+Email addresses to send Logwatch reports to.
+
     # Composer
     composer_home_path: '/home/git/.composer'
     composer_home_owner: git
@@ -202,6 +204,8 @@ Variables for the cleanup and deploy jobs, called from GitHub webhooks.
     composer_keep_updated: true
     composer_add_to_path: true
 
+Composer settings and global install.
+
     # Drush
     drush_launcher_install: no
     drush_install_from_source: yes
@@ -211,13 +215,13 @@ Variables for the cleanup and deploy jobs, called from GitHub webhooks.
     drush_keep_updated: yes
     drush_force_update: no
 
+Install drush 8 globally.
+
     # swap
     swapfile_size: 1GB
     my_custom_path_var: /usr/local/scripts
 
-    # for jq
-    package_name: jq
-
+Swap file settings
 
     setup_apt_install:
     - aptitude
@@ -243,6 +247,8 @@ Variables for the cleanup and deploy jobs, called from GitHub webhooks.
     - s3cmd
     - sshpass
     - unzip
+
+Apps to install, these are required, feel free to add to them.
 
 
 ## Commands
