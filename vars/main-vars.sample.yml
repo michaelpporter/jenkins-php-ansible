@@ -50,7 +50,8 @@ certbot_email: "devops@example.com"
 certbot_create_if_missing: yes
 # Install from source to get dns plugin folders
 certbot_install_from_source: yes
-
+# For live certs, uncoment
+# certbot_cloudflare_acme_server: "{{ certbot_cloudflare_acme_live }}"
 # Email address for Cloudflare Global API Key
 certbot_cloudflare_email: "cloudflare@example.com"
 # ansible-vault encrypt_string 'cloudflareAPIKey' --name 'certbot_cloudflare_api_key'

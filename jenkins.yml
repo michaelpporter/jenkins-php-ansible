@@ -4,8 +4,6 @@
   gather_facts: false
   pre_tasks:
   - setup: # aka gather_facts
-  - import_playbook: setup.yml
-    ignore_errors: yes
   # - name: Add domain to CloudFalre
   #   cloudflare_dns:
   #     zone: "{{base_web_domain}}"
@@ -30,6 +28,7 @@
     - vars/main-vars.yml
 
   roles:
+    - users
     - geerlingguy.git
     - andrewrothstein.hub
     - geerlingguy.postfix
