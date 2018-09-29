@@ -3,10 +3,19 @@
   become: true
   gather_facts: false
   pre_tasks:
-  - name: Install python for Ansible
-    raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
-    changed_when: False
   - setup: # aka gather_facts
+  - import_playbook: setup.yml
+    ignore_errors: yes
+  # - name: Add domain to CloudFalre
+  #   cloudflare_dns:
+  #     zone: "{{base_web_domain}}"
+  #     record: "{{ansible_nodename}}"
+  #     type: A
+  #     value: "{{ ansible_default_ipv4.address }}"
+  #     account_email: "{{ certbot_cloudflare_email }}"
+  #     account_api_token: "{{ certbot_cloudflare_api_key }}"
+  #   register: record
+  # - debug: var=record
   - name: set timezone to America/Chicago
     timezone:
       name: America/Chicago
@@ -21,7 +30,6 @@
     - vars/main-vars.yml
 
   roles:
-    - users
     - geerlingguy.git
     - andrewrothstein.hub
     - geerlingguy.postfix
