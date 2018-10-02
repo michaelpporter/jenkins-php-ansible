@@ -11,7 +11,7 @@ user_git_editor: nano
 # pip install passlib
 # python -c "from passlib.hash import sha512_crypt; import getpass; print(sha512_crypt.using(rounds=5000).hash(getpass.getpass()))"
 # gitpass
-# ansible-vault encrypt_string '$6$rDr/RtNZYSEuGWre$x5ALLL1Fy21NGyQP4PTPqouFfs/LncgsdVqclV8jsoFNU9RCvIu90EwJ2KdE856f61SwrbP6P4rA9dQqIn4bL.' --name 'user_git_password'
+# ansible-vault encrypt_string 'Encrypted-Password' --name 'user_git_password'
 user_git_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           61376430326233356231396130326135323138376437653037393632333933333231326566323835
@@ -32,7 +32,7 @@ user_sudouser_ssh_remove_keys: []
 # pip install passlib
 # python -c "from passlib.hash import sha512_crypt; import getpass; print(sha512_crypt.using(rounds=5000).hash(getpass.getpass()))"
 # sudopass
-# ansible-vault encrypt_string '$6$K/9Vk1PfUIi1K11k$/FKDOLsvxmruorz4/1C3StElh1ugdrNvqmo6mLNWhktp9wVeZjKghKhszTEcIPja38NhDm7tBfowu0Bf9uB9R/' --name 'user_sudouser_password'
+# ansible-vault encrypt_string 'Encrypted-Password' --name 'user_sudouser_password'
 user_sudouser_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           33303334313764363663333839313035393365313435303066663735633530336562313964663361
