@@ -9,7 +9,6 @@ certbot_certs:
 certbot_create_method: standalone
 certbot_create_standalone_stop_services: []
 
-
 # Apache
 apache_remove_default_vhost: true
 apache_ignore_missing_ssl_certificate: true
