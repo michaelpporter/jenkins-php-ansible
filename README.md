@@ -253,7 +253,6 @@ Swap file settings
 
 Apps to install, these are required, feel free to add to them.
 
-
 ## Commands
 
 ### First run
@@ -281,8 +280,7 @@ ansible-playbook main.yml
 
 Setup your SSH config file to include the servers you are working with `~/.ssh/config`.
 
-
-```
+```shell
 Host jenkins
     Hostname remoteip # Remote IP Address
     User demo # `user_sudouser_username` from var/main-vars.yml
@@ -338,4 +336,3 @@ If your `jenkins` host is has anohter name, rename `var/jenkins.yml` to match. i
 [jenkinsgroup]
 jenkins-dev
 ```
-
