@@ -6,6 +6,9 @@ This will not work out of the box, some setup is required.
 
 Copy `var/main-vars.sample.yml` to `var/main-vars.yml` and updated the varaibles for your setup.
 
+## Encrypt String
+
+To encrypt passwords using `ansible-vault encrypt_string` you will need a password file. Check your ansible config for the expected path i.e. `vault_password_file = ~/.ansible/vault-password`. The password in this file will be stored in plain text, enusre it is in a safe place and you keep a copy of the values you have encrypted. I recommend [1Password](https://1password.com/)
 
 ## Variables
 
@@ -317,10 +320,10 @@ grep --color=auto -iR 'inventory' ~/.ansible.cfg
 ```
 
 ```ini
-[jenkinsgroup] 
+[jenkinsgroup]
 jenkins
 
-[webgroup] 
+[webgroup]
 web01 php_version='7.1'
 web02 php_version='7.1'
 
@@ -332,7 +335,7 @@ webgroup
 If your `jenkins` host is has anohter name, rename `var/jenkins.yml` to match. i.e. `jenkins-dev` `var/jenkins-dev.yml`
 
 ```ini
-[jenkinsgroup] 
+[jenkinsgroup]
 jenkins-dev
 ```
 
