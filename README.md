@@ -82,7 +82,7 @@ Settings for the sudo user.
 
 Settings for [geerlingguy.certbot](https://github.com/geerlingguy/ansible-role-certbot)
 
-    # For live certs swithch this value
+    # For live certs switch this value
     # certbot_cloudflare_acme_server: "{{ certbot_cloudflare_acme_live }}"
     certbot_cloudflare_acme_server: "{{ certbot_cloudflare_acme_test }}"
     # Email address for Cloudflare Global API Key

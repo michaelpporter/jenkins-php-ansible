@@ -12,7 +12,6 @@ apache_mods_disabled:
 
 php_packages_extra:
   - libapache2-mod-php7.1
-  - php7.1-mcrypt
   - php7.1-intl
   - php7.1-xsl
   - php7.1-zip

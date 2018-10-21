@@ -1,4 +1,4 @@
 ---
 # Logwatch
-logwatch_send_to: "mailto@example.com"
-logwatch_send_from: "mailfrom@example.com"
+logwatch_send_to: ""
+logwatch_send_from: ""

@@ -4,16 +4,16 @@
   gather_facts: false
   pre_tasks:
   - setup: # aka gather_facts
-  # - name: Add domain to CloudFalre
-  #   cloudflare_dns:
-  #     zone: "{{base_web_domain}}"
-  #     record: "*.{{ansible_nodename}}"
-  #     type: A
-  #     value: "{{ ansible_default_ipv4.address }}"
-  #     account_email: "{{ certbot_cloudflare_email }}"
-  #     account_api_token: "{{ certbot_cloudflare_api_key }}"
-  #   register: record
-  # - debug: var=record
+  - name: Add domain to CloudFalre
+    cloudflare_dns:
+      zone: "{{base_web_domain}}"
+      record: "*.{{ansible_nodename}}"
+      type: A
+      value: "{{ ansible_default_ipv4.address }}"
+      account_email: "{{ certbot_cloudflare_email }}"
+      account_api_token: "{{ certbot_cloudflare_api_key }}"
+    register: record
+  - debug: var=record
   - name: set timezone to America/Chicago
     timezone:
       name: America/Chicago

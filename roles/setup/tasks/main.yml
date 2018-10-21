@@ -89,7 +89,7 @@
       state: directory
       mode: 0775
 
-  - name: Web Server Templates 
+  - name: Web Server Templates
     template:
       src: "{{ item.src }}"
       dest: "{{ item.dest }}"
@@ -97,11 +97,10 @@
       group: www-data
       mode: 0755
     with_items:
-      - { src: 'files/web/dad.php.j2', dest: '/var/www/sites/web/dad.php' }
       - { src: 'files/web/index.php.j2', dest: '/var/www/sites/web/index.php' }
       - { src: 'files/web/phpinfo.php.j2', dest: '/var/www/sites/web/phpinfo.php' }
 
-  - name: web File Templates 
+  - name: web File Templates
     template:
       src: "{{ item.src }}"
       dest: "{{ item.dest }}"

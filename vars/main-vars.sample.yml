@@ -30,8 +30,9 @@ certbot_email: "devops@example.com"
 certbot_create_if_missing: yes
 # Install from source to get dns plugin folders
 certbot_install_from_source: yes
-# For live certs, uncoment
+# By Default certbot will use the testing server. For live certs, switch the comments
 # certbot_cloudflare_acme_server: "{{ certbot_cloudflare_acme_live }}"
+certbot_cloudflare_acme_server: "{{ certbot_cloudflare_acme_test }}"
 # Email address for Cloudflare Global API Key
 certbot_cloudflare_email: "cloudflare@example.com"
 # ansible-vault encrypt_string 'cloudflareAPIKey' --name 'certbot_cloudflare_api_key'
@@ -67,15 +68,12 @@ setup_servers: "{{ groups['webgroup'] }}"
 ## ansible-vault encrypt_string 'slackAPIKey' --name 'setup_slack_api'
 setup_slack_api: ''
 
-
-
 # Jenkins Playbook
 jenkins_vhost: "demojenkins.example.com"
 jenkins_email: "jenkins@example.com"
 jenkins_admin_username: admin
 # ansible-vault encrypt_string 'demo' --name 'jenkins_admin_password'
 jenkins_admin_password: 'demo'
-
 
 # Logwatch Playbook
 logwatch_send_to: "mailto@example.com"
@@ -133,8 +131,6 @@ setup_apt_install:
   - s3cmd
   - sshpass
   - unzip
-
-
 
 ## Pantheon CI https://pantheon.io/docs/guides/jenkins/
 config_terminus_ci: false
